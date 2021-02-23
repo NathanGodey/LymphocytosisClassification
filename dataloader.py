@@ -1,5 +1,6 @@
 from torch.utils.data import Dataset
 import torch
+import torchvision.transforms as transforms
 from PIL import Image
 import pandas as pd
 import numpy as np
@@ -32,14 +33,30 @@ class Lymphocytes(Dataset):
 
         path = os.path.join(self.images_folder, patient_id)
         list_imgs_paths = os.listdir(path)
-        chosen_images = np.random.choice(list_imgs_paths, self.patient_bs)
-        img_array = np.array([np.array(Image.open(os.path.join(path,img_path)).convert('RGB')) for img_path in chosen_images])
+        if self.patient_bs is not None:
+            bs = min(self.patient_bs, len(list_imgs_paths))
+            chosen_images = np.random.choice(list_imgs_paths, bs, replace=False)
+        else:
+            chosen_images = np.random.choice(list_imgs_paths, len(list_imgs_paths), replace=False)
 
-        img_tensor = torch.from_numpy(img_array).permute(0,3,1,2)
+        # # From numpy
+        # img_array = np.array([np.array(Image.open(os.path.join(path,img_path)).convert('RGB')) for img_path in chosen_images])
+        # img_tensor = torch.from_numpy(img_array).permute(0,3,1,2)
+
+        # From torch directly
+        all_imgs = []
+        for img_path in chosen_images:
+            im = Image.open(os.path.join(path,img_path)).convert('RGB')
+            if self.transform is not None:
+                im = self.transform(im)
+            else:
+                im = transforms.ToTensor()(im)
+            all_imgs.append(im)
+        img_tensor = torch.stack(all_imgs, dim=0)
 
         sample = {'images': img_tensor, 'annotations': annotations}
 
-        if self.transform:
-            sample = self.transform(sample)
+        # if self.transform:
+        #     sample = self.transform(sample)
 
         return sample
