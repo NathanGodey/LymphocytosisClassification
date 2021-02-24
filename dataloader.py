@@ -35,11 +35,11 @@ class Lymphocytes(Dataset):
         patient_id = annotations['ID']
 
         path = os.path.join(self.images_folder, patient_id)
-        list_imgs_paths = [el for el in os.listdir(path) if 'bin' in el]
+        list_imgs_paths = [el for el in os.listdir(path)]
         L = len(list_imgs_paths)
         list_imgs_paths = [list_imgs_paths[i%L] for i in range(self.patient_bs)]
         chosen_images = np.random.choice(list_imgs_paths, self.patient_bs, replace=False)
-        img_array = np.array([np.array(Image.open(os.path.join(path,img_path)).convert('L')) for img_path in chosen_images])
+        img_array = np.array([np.array(Image.open(os.path.join(path,img_path)).convert('L'))[::4,::4]/255 for img_path in chosen_images])
         img_array = np.expand_dims(img_array, axis=3)
         img_tensor = torch.from_numpy(img_array).permute(0,3,1,2)
 

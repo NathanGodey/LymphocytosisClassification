@@ -1,13 +1,13 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
-
+import numpy as np
+from tqdm import tqdm
 
 class MILModel(nn.Module):
 
     def __init__(self, encoder, instance_predictor, bag_predictor):
-
+        super(MILModel, self).__init__()
         self.encoder = encoder
 
         if instance_predictor is None:
@@ -38,6 +38,41 @@ class MILModel(nn.Module):
         out = self.bag_predictor(p)
         # Size : (1, num classes)
         return out
+
+    def make_bags(self,dataloader):
+        """
+        Generates bags out of a dataloader
+        Outputs :
+        - bags (np.array(n_bags x n_samples_bag_i x dim_emb))
+        - bags_labels (np.array(n_bags))
+        """
+        print(self.encoder)
+        for i, (imgs, pat_ids, labs) in tqdm(enumerate(dataloader)):
+          output = self.instance_predictor(self.encoder(imgs.float()))
+          if i==0:
+            embeddings = output.cpu().detach().numpy()
+            ids = pat_ids.cpu().detach().numpy().flatten()
+            labels = labs.cpu().detach().numpy().flatten()
+          else:
+            embeddings = np.vstack((embeddings, output.cpu().detach().numpy()))
+            ids = np.append(ids, pat_ids.cpu().detach().numpy().flatten())
+            labels = np.append(labels, labs.cpu().detach().numpy().flatten())
+        bags = []
+        bags_labels = []
+        bags_ids = []
+        for id in np.unique(ids):
+            bags_ids.append(id)
+            indic = ids==id
+            id_label = labels[indic][0]
+            id_embeddings = embeddings[indic]
+            bags.append(id_embeddings)
+            bags_labels.append(id_label)
+        return bags, bags_labels, bags_ids
+
+    def predict(self, dataloader):
+        bags, bags_labels, bags_ids = self.make_bags(dataloader)
+        pred_labels = self.bag_predictor.predict(bags)
+        return np.vstack((bags_ids, pred_labels.flatten())).T
 
 
 if __name__ == '__main__':

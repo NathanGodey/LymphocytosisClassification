@@ -8,13 +8,13 @@ from tqdm import tqdm
 import torch
 from sklearn.metrics import balanced_accuracy_score, f1_score
 
-dataset = Lymphocytes('trainset', patient_bs=15)
-model = CNN(patient_bs=15).cuda()
+dataset = Lymphocytes('trainset', patient_bs=20)
+model = CNN(patient_bs=20).cuda()
 print('Number of parameters: ', sum(p.numel() for p in model.parameters()))
 train_size, val_size = int(0.75*len(dataset)), len(dataset) - int(0.75*len(dataset))
 n_epochs = 200
 
-optimizer = optim.Adam(model.parameters(), lr=0.001)
+optimizer = optim.Adam(model.parameters(), lr=0.0001)
 criterion = nn.BCELoss()
 train_set, val_set = random_split(dataset, (train_size, val_size))
 

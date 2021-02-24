@@ -71,4 +71,4 @@ for epoch in range(n_epochs):
     plt.show()
     plt.imshow(output.cpu().permute(2,3,1,0).detach().numpy()[:,:,:,0])
     plt.show()
-    torch.save(model, 'model.ckpt')
+    torch.save(model, 'autoencoder.ckpt')
