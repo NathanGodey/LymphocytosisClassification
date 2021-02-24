@@ -3,3 +3,4 @@ venv
 .pyc
 .csv
 .h5
+trained_models
