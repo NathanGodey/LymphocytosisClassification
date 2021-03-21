@@ -1,6 +1,11 @@
 # LymphocytosisClassification
 
 ## How to reproduce the results ?
+### 1 - Infer using pretrained models
+```
+python predict_MIL_e2e.py
+```
+## OR
 ### 1 - Create a virtual environment
 ```
 python3 -m venv venv
