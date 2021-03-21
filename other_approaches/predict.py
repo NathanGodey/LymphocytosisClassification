@@ -16,7 +16,7 @@ dataloader_test = DataLoader(dataset_test, batch_size=3, shuffle=True, num_worke
 
 autoencoder_feature_extractor = torch.load('trained_models/autoencoder.ckpt', map_location=device).encoder
 instance_predictor = None
-bag_predictor = load_attention_mil('trained_models/attention_deep_pooling_mil_1.h5', 25, 198)
+bag_predictor = load_attention_mil('trained_models/attention_deep_pooling_mil_1.h5', 60, 198)
 
 mil_model = MILModel(autoencoder_feature_extractor, None, bag_predictor)
 prediction_train = mil_model.predict(dataloader_train)

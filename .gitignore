@@ -1,6 +1,6 @@
 venv
 .ipynb_checkpoints
-.pyc
-.csv
+*.pyc
+*.csv
 .h5
 trained_models

@@ -25,18 +25,18 @@ y = train_df['LABEL'].to_numpy()
 ids_test = test_df['ID'].to_numpy()
 X_test = test_df[['LYMPH_COUNT', 'DOB', 'Proba']].to_numpy()
 acc_mean = 0
-for i in range(10):
-    X_train, X_val, y_train, y_val, id_train, id_val = train_test_split(X, y, ids, test_size=0.25, stratify=y)
 
-    scaler = StandardScaler()
-    X_train = scaler.fit_transform(X_train)
-    X_val = scaler.transform(X_val)
-    X_test = scaler.transform(X_test)
+X_train, X_val, y_train, y_val, id_train, id_val = train_test_split(X, y, ids, test_size=0.25, stratify=y)
 
-    clf = MLPClassifier(hidden_layer_sizes = [10,8,5], max_iter=1750).fit(X_train, y_train)
-    acc = balanced_accuracy_score(y_val, clf.predict(X_val))
-    acc_mean+=acc
-    print(acc)
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_val = scaler.transform(X_val)
+X_test = scaler.transform(X_test)
+
+clf = MLPClassifier(hidden_layer_sizes = [5,10,8], max_iter=1500).fit(X_train, y_train)
+acc = balanced_accuracy_score(y_val, clf.predict(X_val))
+acc_mean+=acc
+print(acc)
 print('-->', acc_mean/10)
 y_pred = clf.predict(X_test)
 result_df = pd.DataFrame(zip(ids_test, y_pred), columns = ['ID', 'Predicted'])
