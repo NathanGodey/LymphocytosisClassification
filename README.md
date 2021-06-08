@@ -1,5 +1,9 @@
 # LymphocytosisClassification
 
+This project was the main assignment of the CentraleSupelec course named <i>Deep Learning for Medical Imaging</i>, led by Olivier Colliot and Maria Vakalopolou.
+The report can be found <a href=https://github.com/NathanGodey/LymphocytosisClassification/blob/main/LymphocytosisClassification.pdf>here</a>.
+
+
 ## How to reproduce the results ? (using pretrained models)
 ### 1 - Create a virtual environment
 ```
